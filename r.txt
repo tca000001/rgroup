@@ -1,0 +1,26 @@
+fluidPage(
+  sliderInput(inputId = "year",
+              label = "Choose an election year",
+              value = 1964, min = 1964, max = 2016, step = 4, animate = TRUE),
+  leafletOutput('map'))
+
+function(input, output) {map<-leaflet(
+  NPR1to1,
+  options=leafletOptions(
+    crs = leafletCRS("L.CRS.Simple"),
+    minZoom = -1.5, maxZoom = -0.5,
+    dragging = FALSE, zoomControl = TRUE,
+    attributionControl = FALSE)) %>%
+  addPolygons(
+    weight=2,color='white', group = 'states',
+    fillOpacity = 0.6, opacity = 1, fillColor= ~factpal(states),
+    highlightOptions = highlightOptions(weight = 4)) %>%
+  addLabelOnlyMarkers(
+    data=NPR1to1.centers,
+    label = ~as.character(state),
+    labelOptions = labelOptions(
+      noHide = 'T', textOnly = T,
+      offset=c(-4.5,-10), textsize = '12px')) %>%
+  styleMap()
+output$map = renderLeaflet(map)
+}
